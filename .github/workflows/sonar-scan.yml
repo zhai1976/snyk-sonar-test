@@ -30,12 +30,12 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           # Optionally add any project-specific analysis parameters here
+          # Replace 'YOUR_PROJECT_KEY_HERE' with a unique key for your project in SonarQube
+          # Other properties for specific languages (e.g., Maven, Gradle) are often handled automatically
+          # If using SonarCloud, the organization key is also usually required:
           # projectBaseDir: . 
           args: >
             -Dsonar.projectKey=zhai1976_snyk-sonar-test
-            # Replace 'YOUR_PROJECT_KEY_HERE' with a unique key for your project in SonarQube
-            # Other properties for specific languages (e.g., Maven, Gradle) are often handled automatically
-            # If using SonarCloud, the organization key is also usually required:
             -Dsonar.organization=zhai1976
 
       # Optional: Check the Quality Gate status (Requires Developer Edition or higher)
