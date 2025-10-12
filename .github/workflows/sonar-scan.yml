@@ -1,0 +1,48 @@
+name: SonarQube Scan
+
+on:
+  push:
+    branches:
+      - main # or master
+  pull_request:
+    types: [opened, synchronize, reopened] # Triggers on PR activity
+
+jobs:
+  sonar_scan:
+    runs-on: ubuntu-latest
+    
+    # Permissions are needed for GitHub Actions to interact with the repository's status checks/comments (for PR decoration)
+    permissions:
+      contents: read
+      pull-requests: write # Required for Quality Gate status on PR
+      
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clone is essential for accurate SonarQube analysis, especially for pull requests
+          fetch-depth: 0 
+
+      # Configure and run the SonarScanner
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          # Optionally add any project-specific analysis parameters here
+          # projectBaseDir: . 
+          args: >
+            -Dsonar.projectKey=zhai1976_snyk-sonar-test
+            # Replace 'YOUR_PROJECT_KEY_HERE' with a unique key for your project in SonarQube
+            # Other properties for specific languages (e.g., Maven, Gradle) are often handled automatically
+            # If using SonarCloud, the organization key is also usually required:
+            -Dsonar.organization=zhai1976
+
+      # Optional: Check the Quality Gate status (Requires Developer Edition or higher)
+      - name: SonarQube Quality Gate Check
+        if: github.event_name == 'pull_request' # Only check for PRs to block merge if quality gate fails
+        uses: SonarSource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5 # Fail the job if it waits for the Quality Gate for too long
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
