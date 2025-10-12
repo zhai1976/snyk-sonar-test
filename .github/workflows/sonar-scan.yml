@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize, reopened] # Triggers on PR activity
 
 jobs:
-  sonar_scan:
+  sonar_scan-TEST:
     runs-on: ubuntu-latest
     
     # Permissions are needed for GitHub Actions to interact with the repository's status checks/comments (for PR decoration)
